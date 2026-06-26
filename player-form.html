@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Player Metrics Form — Baseball Recruiting</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0C2340;--navy-mid:#0f2d55;
+  --orange:#E87722;--orange-light:#f08c3a;
+  --chalk:#f8f6f2;--chalk-mid:#ede9e0;--white:#ffffff;
+  --text-dark:#0C2340;--text-mid:#3a4a5c;--text-light:#6a7a8c;
+  --green:#1a7a3c;--green-bg:#EAF3DE;--green-text:#27500A;
+  --radius:8px;--radius-lg:12px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--chalk);color:var(--text-dark);-webkit-font-smoothing:antialiased;min-height:100vh}
+.header{background:var(--navy);padding:14px 24px;display:flex;align-items:center;gap:12px;border-bottom:2px solid var(--orange)}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;letter-spacing:1px}
+.logo span{color:var(--orange)}
+.hero{background:var(--navy);padding:40px 24px 48px;text-align:center}
+.hero-eyebrow{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--orange);margin-bottom:10px}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,7vw,64px);color:#fff;line-height:1;margin-bottom:10px}
+.hero p{font-size:14px;color:rgba(255,255,255,0.6);max-width:480px;margin:0 auto}
+.main{max-width:680px;margin:0 auto;padding:32px 16px}
+.form-card{background:var(--white);border:0.5px solid var(--chalk-mid);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px}
+.form-card-header{background:var(--navy);padding:14px 20px;display:flex;align-items:center;gap:10px}
+.form-card-header h2{font-size:14px;font-weight:600;color:#fff;letter-spacing:0.2px}
+.form-card-header .icon{font-size:18px}
+.form-body{padding:20px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field.full{grid-column:1/-1}
+.field label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-light)}
+.field input,.field select,.field textarea{padding:9px 12px;border:0.5px solid var(--chalk-mid);border-radius:var(--radius);font-size:14px;background:var(--chalk);color:var(--text-dark);font-family:'Inter',sans-serif;width:100%}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--orange);background:#fff}
+.field .hint{font-size:11px;color:var(--text-light);margin-top:2px}
+.metric-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.na-row{display:flex;align-items:center;gap:8px;margin-top:6px}
+.na-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--orange);cursor:pointer}
+.na-row label{font-size:12px;color:var(--text-light);cursor:pointer}
+.position-note{background:var(--chalk);border:0.5px solid var(--chalk-mid);border-radius:var(--radius);padding:10px 14px;font-size:12px;color:var(--text-mid);margin-bottom:16px;display:none}
+.position-note.show{display:block}
+.submit-section{text-align:center;padding:24px 16px}
+.submit-btn{background:var(--orange);color:#fff;border:none;border-radius:var(--radius);padding:14px 48px;font-size:16px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;width:100%;max-width:400px}
+.submit-btn:hover{background:var(--orange-light)}
+.submit-btn:disabled{opacity:0.6;cursor:not-allowed}
+.success-screen{display:none;text-align:center;padding:48px 24px}
+.success-screen.show{display:block}
+.success-icon{font-size:64px;margin-bottom:16px}
+.success-screen h2{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--navy);margin-bottom:8px}
+.success-screen p{font-size:15px;color:var(--text-mid);margin-bottom:24px}
+.success-btn{background:var(--orange);color:#fff;border:none;border-radius:var(--radius);padding:12px 32px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+.error-bar{background:#FCEBEB;color:#791F1F;padding:10px 24px;text-align:center;font-size:13px;display:none;border-radius:var(--radius);margin-bottom:16px}
+.error-bar.show{display:block}
+.divider{grid-column:1/-1;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-light);border-top:0.5px solid var(--chalk-mid);padding-top:12px;margin-top:4px}
+@media(max-width:540px){.form-grid,.metric-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">Recruiting<span>HQ</span></div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow">Player Assessment</div>
+  <h1>Enter Your Metrics</h1>
+  <p>Fill in your stats below. Only enter the metrics that apply to your position.</p>
+</section>
+
+<main class="main">
+  <div id="error-bar" class="error-bar"></div>
+
+  <div id="form-content">
+
+    <!-- PLAYER INFO -->
+    <div class="form-card">
+      <div class="form-card-header">
+        <span class="icon">👤</span>
+        <h2>Player Information</h2>
+      </div>
+      <div class="form-body">
+        <div class="form-grid">
+          <div class="field full">
+            <label>Full Name *</label>
+            <input id="player_name" placeholder="First Last" type="text"/>
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <input id="email" placeholder="you@email.com" type="email"/>
+          </div>
+          <div class="field">
+            <label>Grad Year *</label>
+            <select id="grad_year">
+              <option value="">Select year</option>
+              <option>2025</option><option>2026</option><option>2027</option>
+              <option>2028</option><option>2029</option><option>2030</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label>Primary Position *</label>
+            <select id="position" onchange="updatePositionUI()">
+              <option value="">Select position</option>
+              <option>Catcher</option>
+              <option>First Base</option>
+              <option>Second Base</option>
+              <option>Third Base</option>
+              <option>Short Stop</option>
+              <option>Outfielder</option>
+              <option>Right Handed Pitcher</option>
+              <option>Left Handed Pitcher</option>
+              <option>Two Way Player</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label>Video Link</label>
+            <input id="video_link" placeholder="https://..." type="url"/>
+            <span class="hint">Hudl, YouTube, or any highlight video</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHYSICAL -->
+    <div class="form-card">
+      <div class="form-card-header">
+        <span class="icon">📏</span>
+        <h2>Physical Measurements</h2>
+      </div>
+      <div class="form-body">
+        <div class="form-grid">
+          <div class="field">
+            <label>Height (inches)</label>
+            <input id="height" placeholder="e.g. 72" type="number" min="60" max="84"/>
+            <span class="hint">e.g. 6'0" = 72 inches</span>
+          </div>
+          <div class="field">
+            <label>Weight (lbs)</label>
+            <input id="weight" placeholder="e.g. 185" type="number" min="100" max="300"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POSITION PLAYER METRICS -->
+    <div class="form-card" id="card-position-player">
+      <div class="form-card-header">
+        <span class="icon">⚾</span>
+        <h2>Position Player Metrics</h2>
+      </div>
+      <div class="form-body">
+        <div class="form-grid">
+          <div class="field">
+            <label>60 Time (seconds)</label>
+            <input id="sixty_time" placeholder="e.g. 6.85" type="number" step="0.01" min="5" max="9"/>
+          </div>
+          <div class="field">
+            <label>Exit Velocity (MPH)</label>
+            <input id="exit_velo" placeholder="e.g. 95" type="number" min="60" max="130"/>
+          </div>
+          <div class="field">
+            <label>Arm Velocity (MPH)</label>
+            <input id="arm_velo" placeholder="e.g. 85" type="number" min="50" max="110"/>
+          </div>
+          <div class="field">
+            <label>Hard Contact (%)</label>
+            <input id="hard_contact" placeholder="e.g. 75" type="number" min="0" max="100"/>
+            <span class="hint">Percentage of hard hit balls</span>
+          </div>
+
+          <!-- CATCHER ONLY -->
+          <div class="field full" id="pop-time-field">
+            <div class="divider">Catcher Metrics</div>
+          </div>
+          <div class="field" id="pop-time-wrapper">
+            <label>Pop Time 2B (seconds)</label>
+            <input id="pop_time" placeholder="e.g. 2.05" type="number" step="0.01" min="1.5" max="3"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PITCHER METRICS -->
+    <div class="form-card" id="card-pitcher">
+      <div class="form-card-header">
+        <span class="icon">🥎</span>
+        <h2>Pitcher Metrics</h2>
+      </div>
+      <div class="form-body">
+        <div class="form-grid">
+          <div class="field">
+            <label>FB Velocity (MPH)</label>
+            <input id="fb_velo" placeholder="e.g. 88" type="number" min="60" max="110"/>
+          </div>
+          <div class="field">
+            <label>Strike % </label>
+            <input id="strike_pct" placeholder="e.g. 65" type="number" min="0" max="100"/>
+          </div>
+          <div class="field">
+            <label>FB-BB Differential (MPH)</label>
+            <input id="fb_bb_diff" placeholder="e.g. 8" type="number" min="0" max="30"/>
+            <span class="hint">Fastball minus breaking ball speed</span>
+          </div>
+          <div class="field">
+            <label>FB-CH Differential (MPH)</label>
+            <input id="fb_ch_diff" placeholder="e.g. 10" type="number" min="0" max="25"/>
+            <span class="hint">Fastball minus changeup speed</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTES -->
+    <div class="form-card">
+      <div class="form-card-header">
+        <span class="icon">📝</span>
+        <h2>Additional Notes</h2>
+      </div>
+      <div class="form-body">
+        <div class="field">
+          <label>Notes</label>
+          <textarea id="notes" rows="3" placeholder="Any additional context about your metrics, injuries, or other relevant info..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="submit-section">
+      <button class="submit-btn" onclick="submitForm()" id="submit-btn">Submit My Metrics →</button>
+    </div>
+
+  </div>
+
+  <!-- SUCCESS SCREEN -->
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">✅</div>
+    <h2>You're In!</h2>
+    <p>Your metrics have been saved. Check the Fit Score dashboard to see how you stack up at every school.</p>
+    <button class="success-btn" onclick="resetForm()">Submit Another Player</button>
+  </div>
+
+</main>
+
+<script>
+const SUPABASE_URL='https://tthkymotrfxjkylxgclf.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0aGt5bW90cmZ4amt5bHhnY2xmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzNDU0NTMsImV4cCI6MjA5NzkyMTQ1M30.HmDXmImmPQVHvOa5_aKPPyYxI440QMIsoFkB9ZUlWfA';
+
+const PITCHER_POSITIONS=['Right Handed Pitcher','Left Handed Pitcher'];
+const POSITION_PLAYER_POSITIONS=['Catcher','First Base','Second Base','Third Base','Short Stop','Outfielder'];
+const TWO_WAY=['Two Way Player'];
+
+function updatePositionUI(){
+  const pos=document.getElementById('position').value;
+  const isPitcher=PITCHER_POSITIONS.includes(pos);
+  const isPositionPlayer=POSITION_PLAYER_POSITIONS.includes(pos);
+  const isTwoWay=TWO_WAY.includes(pos);
+  const isCatcher=pos==='Catcher';
+
+  document.getElementById('card-pitcher').style.display=(isPitcher||isTwoWay)?'block':'none';
+  document.getElementById('card-position-player').style.display=(isPositionPlayer||isTwoWay)?'block':'none';
+  document.getElementById('pop-time-field').style.display=isCatcher?'block':'none';
+  document.getElementById('pop-time-wrapper').style.display=isCatcher?'block':'none';
+}
+
+function showError(msg){
+  const e=document.getElementById('error-bar');
+  e.textContent=msg;e.classList.add('show');
+  e.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function val(id){return document.getElementById(id).value.trim();}
+
+async function submitForm(){
+  const name=val('player_name');
+  const pos=val('position');
+  const gradYear=val('grad_year');
+  if(!name){showError('Please enter the player name.');return;}
+  if(!pos){showError('Please select a position.');return;}
+  if(!gradYear){showError('Please select a grad year.');return;}
+
+  const player={
+    player_name:name,
+    email:val('email'),
+    grad_year:gradYear,
+    position:pos,
+    video_link:val('video_link'),
+    height:val('height'),
+    weight:val('weight'),
+    sixty_time:val('sixty_time')||'0',
+    exit_velo:val('exit_velo')||'0',
+    fb_velo:val('fb_velo')||'0',
+    arm_velo:val('arm_velo')||'0',
+    hard_contact:val('hard_contact')||'0',
+    pop_time:val('pop_time')||'0',
+    strike_pct:val('strike_pct')||'0',
+    fb_bb_diff:val('fb_bb_diff')||'0',
+    fb_ch_diff:val('fb_ch_diff')||'0',
+    notes:val('notes'),
+  };
+
+  const btn=document.getElementById('submit-btn');
+  btn.textContent='Saving...';btn.disabled=true;
+  document.getElementById('error-bar').classList.remove('show');
+
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/players`,{
+      method:'POST',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+      body:JSON.stringify(player)
+    });
+    if(!res.ok)throw new Error('Failed to save');
+    document.getElementById('form-content').style.display='none';
+    document.getElementById('success-screen').classList.add('show');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }catch(e){
+    showError('Could not save. Please check your connection and try again.');
+    btn.textContent='Submit My Metrics →';btn.disabled=false;
+  }
+}
+
+function resetForm(){
+  document.getElementById('form-content').style.display='block';
+  document.getElementById('success-screen').classList.remove('show');
+  document.getElementById('submit-btn').textContent='Submit My Metrics →';
+  document.getElementById('submit-btn').disabled=false;
+  ['player_name','email','video_link','height','weight','sixty_time','exit_velo','fb_velo','arm_velo','hard_contact','pop_time','strike_pct','fb_bb_diff','fb_ch_diff','notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('grad_year').selectedIndex=0;
+  document.getElementById('position').selectedIndex=0;
+  updatePositionUI();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Init — hide pitcher/position cards until position selected
+updatePositionUI();
+</script>
+</body>
+</html>
