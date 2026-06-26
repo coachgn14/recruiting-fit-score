@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Coach Portal — Recruiting HQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0C2340;--navy-mid:#0f2d55;
+  --orange:#E87722;--orange-light:#f08c3a;
+  --chalk:#f8f6f2;--chalk-mid:#ede9e0;--white:#ffffff;
+  --text-dark:#0C2340;--text-mid:#3a4a5c;--text-light:#6a7a8c;
+  --radius:8px;--radius-lg:12px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--chalk);color:var(--text-dark);-webkit-font-smoothing:antialiased;min-height:100vh}
+.header{background:var(--navy);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--orange)}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;letter-spacing:1px}
+.logo span{color:var(--orange)}
+.header-right{font-size:12px;color:rgba(255,255,255,0.5)}
+.hero{background:var(--navy);padding:40px 24px 48px;text-align:center}
+.hero-eyebrow{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--orange);margin-bottom:10px}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,7vw,64px);color:#fff;line-height:1;margin-bottom:10px}
+.hero p{font-size:14px;color:rgba(255,255,255,0.6);max-width:480px;margin:0 auto}
+.main{max-width:800px;margin:0 auto;padding:32px 16px}
+.form-card{background:var(--white);border:0.5px solid var(--chalk-mid);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px}
+.form-card-header{background:var(--navy);padding:14px 20px;display:flex;align-items:center;gap:10px}
+.form-card-header h2{font-size:14px;font-weight:600;color:#fff}
+.form-card-header .icon{font-size:18px}
+.form-body{padding:20px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field.full{grid-column:1/-1}
+.field label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-light)}
+.field input,.field select{padding:9px 12px;border:0.5px solid var(--chalk-mid);border-radius:var(--radius);font-size:14px;background:var(--chalk);color:var(--text-dark);font-family:'Inter',sans-serif;width:100%}
+.field input:focus,.field select:focus{outline:none;border-color:var(--orange);background:#fff}
+.field .hint{font-size:11px;color:var(--text-light);margin-top:2px}
+.section-label{font-size:12px;font-weight:600;color:var(--text-mid);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;padding-bottom:6px;border-bottom:0.5px solid var(--chalk-mid)}
+.metrics-section{margin-bottom:20px}
+.weight-hint{font-size:11px;color:var(--text-light);margin-bottom:12px;background:var(--chalk);border-radius:var(--radius);padding:8px 12px}
+.position-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+.pos-tab{padding:6px 14px;border-radius:20px;border:0.5px solid var(--chalk-mid);font-size:12px;cursor:pointer;background:var(--white);color:var(--text-mid);font-family:'Inter',sans-serif;font-weight:500}
+.pos-tab:hover{background:var(--chalk)}
+.pos-tab.active{background:var(--navy);border-color:var(--navy);color:#fff}
+.position-form{display:none}
+.position-form.active{display:block}
+.metric-row{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;align-items:end;padding:10px 0;border-bottom:0.5px solid var(--chalk-mid)}
+.metric-row:last-child{border-bottom:none}
+.metric-name{font-size:13px;font-weight:500;color:var(--text-dark)}
+.metric-sub{font-size:11px;color:var(--text-light);margin-top:2px}
+.metric-input{padding:7px 10px;border:0.5px solid var(--chalk-mid);border-radius:var(--radius);font-size:13px;background:var(--chalk);color:var(--text-dark);font-family:'Inter',sans-serif;width:100%}
+.metric-input:focus{outline:none;border-color:var(--orange);background:#fff}
+.col-header{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-light);text-align:center}
+.save-position-btn{background:var(--orange);color:#fff;border:none;border-radius:var(--radius);padding:10px 24px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;margin-top:16px}
+.save-position-btn:hover{background:var(--orange-light)}
+.save-position-btn:disabled{opacity:0.6;cursor:not-allowed}
+.saved-badge{display:none;font-size:12px;color:#27500A;background:#EAF3DE;padding:4px 10px;border-radius:20px;margin-left:10px}
+.saved-badge.show{display:inline-block}
+.submit-section{text-align:center;padding:24px 0}
+.submit-btn{background:var(--orange);color:#fff;border:none;border-radius:var(--radius);padding:14px 48px;font-size:16px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;width:100%;max-width:400px}
+.submit-btn:hover{background:var(--orange-light)}
+.submit-btn:disabled{opacity:0.6;cursor:not-allowed}
+.error-bar{background:#FCEBEB;color:#791F1F;padding:10px 24px;text-align:center;font-size:13px;display:none;border-radius:var(--radius);margin-bottom:16px}
+.error-bar.show{display:block}
+.success-screen{display:none;text-align:center;padding:48px 24px}
+.success-screen.show{display:block}
+.success-icon{font-size:64px;margin-bottom:16px}
+.success-screen h2{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--navy);margin-bottom:8px}
+.success-screen p{font-size:15px;color:var(--text-mid);margin-bottom:24px}
+.success-btn{background:var(--orange);color:#fff;border:none;border-radius:var(--radius);padding:12px 32px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;z-index:300;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+@media(max-width:600px){.form-grid,.form-grid-3{grid-template-columns:1fr}.metric-row{grid-template-columns:1fr 1fr}.metric-row .metric-name-col{grid-column:1/-1}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">Recruiting<span>HQ</span></div>
+  <div class="header-right">Coach Portal</div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow">School Setup</div>
+  <h1>Coach's Corner</h1>
+  <p>Set your school's minimum requirements and metric weights for each position. Players will be scored against your standards.</p>
+</section>
+
+<main class="main">
+  <div id="error-bar" class="error-bar"></div>
+
+  <div id="form-content">
+
+    <!-- SCHOOL INFO -->
+    <div class="form-card">
+      <div class="form-card-header">
+        <span class="icon">🏫</span>
+        <h2>School Information</h2>
+      </div>
+      <div class="form-body">
+        <div class="form-grid">
+          <div class="field full">
+            <label>School Name *</label>
+            <input id="school_name" placeholder="e.g. University of Florida"/>
+          </div>
+          <div class="field">
+            <label>Division *</label>
+            <select id="division">
+              <option value="">Select division</option>
+              <option>D1</option><option>D2</option><option>D3</option><option>JUCO</option><option>NAIA</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>State</label>
+            <input id="state" placeholder="e.g. FL" maxlength="2" style="text-transform:uppercase"/>
+          </div>
+          <div class="field">
+            <label>Coach Name</label>
+            <input id="coach_name" placeholder="Coach Smith"/>
+          </div>
+          <div class="field">
+            <label>Coach Email</label>
+            <input id="coach_email" type="email" placeholder="coach@school.edu"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POSITION METRICS -->
+    <div class="form-card">
+      <div class="form-card-header">
+        <span class="icon">⚾</span>
+        <h2>Position Requirements & Weights</h2>
+      </div>
+      <div class="form-body">
+        <div class="weight-hint">
+          💡 <strong>Minimum</strong> = the lowest value you'd consider. <strong>Weight</strong> = how important this metric is to you (1-10, where 10 = most important).
+        </div>
+
+        <!-- POSITION TABS -->
+        <div class="position-tabs">
+          <button class="pos-tab active" onclick="switchPos('catcher',this)">Catcher</button>
+          <button class="pos-tab" onclick="switchPos('infield',this)">Infield</button>
+          <button class="pos-tab" onclick="switchPos('outfield',this)">Outfield</button>
+          <button class="pos-tab" onclick="switchPos('rhp',this)">RHP</button>
+          <button class="pos-tab" onclick="switchPos('lhp',this)">LHP</button>
+        </div>
+
+        <!-- CATCHER -->
+        <div class="position-form active" id="pos-catcher">
+          <div class="metric-row" style="padding-top:0">
+            <div></div>
+            <div class="col-header">Minimum</div>
+            <div class="col-header">Weight (1-10)</div>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">Height</div><div class="metric-sub">inches</div></div>
+            <input class="metric-input" id="c-height_min" placeholder="e.g. 70"/>
+            <input class="metric-input" id="c-height_weight" placeholder="5" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">Weight</div><div class="metric-sub">lbs</div></div>
+            <input class="metric-input" id="c-weight_min" placeholder="e.g. 185"/>
+            <input class="metric-input" id="c-height_weight2" placeholder="4" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">60 Time</div><div class="metric-sub">seconds (lower is better)</div></div>
+            <input class="metric-input" id="c-sixty_max" placeholder="e.g. 7.2"/>
+            <input class="metric-input" id="c-sixty_weight" placeholder="6" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">Exit Velocity</div><div class="metric-sub">MPH</div></div>
+            <input class="metric-input" id="c-exit_velo_min" placeholder="e.g. 90"/>
+            <input class="metric-input" id="c-exit_velo_weight" placeholder="8" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">Arm Velocity</div><div class="metric-sub">MPH</div></div>
+            <input class="metric-input" id="c-arm_velo_min" placeholder="e.g. 80"/>
+            <input class="metric-input" id="c-arm_velo_weight" placeholder="9" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">Hard Contact %</div><div class="metric-sub">percentage</div></div>
+            <input class="metric-input" id="c-hard_contact_min" placeholder="e.g. 60"/>
+            <input class="metric-input" id="c-hard_contact_weight" placeholder="7" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">Pop Time 2B</div><div class="metric-sub">seconds (lower is better)</div></div>
+            <input class="metric-input" id="c-pop_time_max" placeholder="e.g. 2.1"/>
+            <input class="metric-input" id="c-pop_time_weight" placeholder="10" min="1" max="10" type="number"/>
+          </div>
+          <button class="save-position-btn" onclick="savePosition('catcher','c')">
+            Save Catcher Requirements
+            <span class="saved-badge" id="badge-catcher">✓ Saved</span>
+          </button>
+        </div>
+
+        <!-- INFIELD -->
+        <div class="position-form" id="pos-infield">
+          <div class="metric-row" style="padding-top:0">
+            <div></div>
+            <div class="col-header">Minimum</div>
+            <div class="col-header">Weight (1-10)</div>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">Height</div><div class="metric-sub">inches</div></div>
+            <input class="metric-input" id="i-height_min" placeholder="e.g. 68"/>
+            <input class="metric-input" id="i-height_weight" placeholder="4" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">60 Time</div><div class="metric-sub">seconds (lower is better)</div></div>
+            <input class="metric-input" id="i-sixty_max" placeholder="e.g. 6.9"/>
+            <input class="metric-input" id="i-sixty_weight" placeholder="8" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">Exit Velocity</div><div class="metric-sub">MPH</div></div>
+            <input class="metric-input" id="i-exit_velo_min" placeholder="e.g. 88"/>
+            <input class="metric-input" id="i-exit_velo_weight" placeholder="8" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">Arm Velocity</div><div class="metric-sub">MPH</div></div>
+            <input class="metric-input" id="i-arm_velo_min" placeholder="e.g. 82"/>
+            <input class="metric-input" id="i-arm_velo_weight" placeholder="9" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">Hard Contact %</div><div class="metric-sub">percentage</div></div>
+            <input class="metric-input" id="i-hard_contact_min" placeholder="e.g. 55"/>
+            <input class="metric-input" id="i-hard_contact_weight" placeholder="7" min="1" max="10" type="number"/>
+          </div>
+          <button class="save-position-btn" onclick="savePosition('infield','i')">
+            Save Infield Requirements
+            <span class="saved-badge" id="badge-infield">✓ Saved</span>
+          </button>
+        </div>
+
+        <!-- OUTFIELD -->
+        <div class="position-form" id="pos-outfield">
+          <div class="metric-row" style="padding-top:0">
+            <div></div>
+            <div class="col-header">Minimum</div>
+            <div class="col-header">Weight (1-10)</div>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">Height</div><div class="metric-sub">inches</div></div>
+            <input class="metric-input" id="o-height_min" placeholder="e.g. 70"/>
+            <input class="metric-input" id="o-height_weight" placeholder="5" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">60 Time</div><div class="metric-sub">seconds (lower is better)</div></div>
+            <input class="metric-input" id="o-sixty_max" placeholder="e.g. 6.8"/>
+            <input class="metric-input" id="o-sixty_weight" placeholder="9" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">Exit Velocity</div><div class="metric-sub">MPH</div></div>
+            <input class="metric-input" id="o-exit_velo_min" placeholder="e.g. 90"/>
+            <input class="metric-input" id="o-exit_velo_weight" placeholder="9" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">Arm Velocity</div><div class="metric-sub">MPH</div></div>
+            <input class="metric-input" id="o-arm_velo_min" placeholder="e.g. 80"/>
+            <input class="metric-input" id="o-arm_velo_weight" placeholder="7" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">Hard Contact %</div><div class="metric-sub">percentage</div></div>
+            <input class="metric-input" id="o-hard_contact_min" placeholder="e.g. 55"/>
+            <input class="metric-input" id="o-hard_contact_weight" placeholder="8" min="1" max="10" type="number"/>
+          </div>
+          <button class="save-position-btn" onclick="savePosition('outfield','o')">
+            Save Outfield Requirements
+            <span class="saved-badge" id="badge-outfield">✓ Saved</span>
+          </button>
+        </div>
+
+        <!-- RHP -->
+        <div class="position-form" id="pos-rhp">
+          <div class="metric-row" style="padding-top:0">
+            <div></div>
+            <div class="col-header">Minimum</div>
+            <div class="col-header">Weight (1-10)</div>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">Height</div><div class="metric-sub">inches</div></div>
+            <input class="metric-input" id="r-height_min" placeholder="e.g. 72"/>
+            <input class="metric-input" id="r-height_weight" placeholder="6" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">FB Velocity</div><div class="metric-sub">MPH</div></div>
+            <input class="metric-input" id="r-fb_velo_min" placeholder="e.g. 88"/>
+            <input class="metric-input" id="r-fb_velo_weight" placeholder="10" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">Strike %</div><div class="metric-sub">percentage</div></div>
+            <input class="metric-input" id="r-strike_pct_min" placeholder="e.g. 60"/>
+            <input class="metric-input" id="r-strike_pct_weight" placeholder="9" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">FB-BB Differential</div><div class="metric-sub">MPH</div></div>
+            <input class="metric-input" id="r-fb_bb_diff_min" placeholder="e.g. 7"/>
+            <input class="metric-input" id="r-fb_bb_diff_weight" placeholder="8" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">FB-CH Differential</div><div class="metric-sub">MPH</div></div>
+            <input class="metric-input" id="r-fb_ch_diff_min" placeholder="e.g. 8"/>
+            <input class="metric-input" id="r-fb_ch_diff_weight" placeholder="8" min="1" max="10" type="number"/>
+          </div>
+          <button class="save-position-btn" onclick="savePosition('rhp','r')">
+            Save RHP Requirements
+            <span class="saved-badge" id="badge-rhp">✓ Saved</span>
+          </button>
+        </div>
+
+        <!-- LHP -->
+        <div class="position-form" id="pos-lhp">
+          <div class="metric-row" style="padding-top:0">
+            <div></div>
+            <div class="col-header">Minimum</div>
+            <div class="col-header">Weight (1-10)</div>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">Height</div><div class="metric-sub">inches</div></div>
+            <input class="metric-input" id="l-height_min" placeholder="e.g. 72"/>
+            <input class="metric-input" id="l-height_weight" placeholder="6" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">FB Velocity</div><div class="metric-sub">MPH</div></div>
+            <input class="metric-input" id="l-fb_velo_min" placeholder="e.g. 85"/>
+            <input class="metric-input" id="l-fb_velo_weight" placeholder="10" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">Strike %</div><div class="metric-sub">percentage</div></div>
+            <input class="metric-input" id="l-strike_pct_min" placeholder="e.g. 60"/>
+            <input class="metric-input" id="l-strike_pct_weight" placeholder="9" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">FB-BB Differential</div><div class="metric-sub">MPH</div></div>
+            <input class="metric-input" id="l-fb_bb_diff_min" placeholder="e.g. 7"/>
+            <input class="metric-input" id="l-fb_bb_diff_weight" placeholder="8" min="1" max="10" type="number"/>
+          </div>
+          <div class="metric-row">
+            <div><div class="metric-name">FB-CH Differential</div><div class="metric-sub">MPH</div></div>
+            <input class="metric-input" id="l-fb_ch_diff_min" placeholder="e.g. 8"/>
+            <input class="metric-input" id="l-fb_ch_diff_weight" placeholder="8" min="1" max="10" type="number"/>
+          </div>
+          <button class="save-position-btn" onclick="savePosition('lhp','l')">
+            Save LHP Requirements
+            <span class="saved-badge" id="badge-lhp">✓ Saved</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="submit-section">
+      <button class="submit-btn" onclick="submitSchool()" id="submit-btn">Save School Profile →</button>
+    </div>
+
+  </div>
+
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">🏆</div>
+    <h2>School Saved!</h2>
+    <p>Your requirements and weights are live. Players will now be scored against your standards.</p>
+    <button class="success-btn" onclick="resetForm()">Add Another School</button>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL='https://tthkymotrfxjkylxgclf.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0aGt5bW90cmZ4amt5bHhnY2xmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzNDU0NTMsImV4cCI6MjA5NzkyMTQ1M30.HmDXmImmPQVHvOa5_aKPPyYxI440QMIsoFkB9ZUlWfA';
+
+let schoolId=null;
+let savedPositions={};
+
+function switchPos(pos,btn){
+  document.querySelectorAll('.position-form').forEach(f=>f.classList.remove('active'));
+  document.querySelectorAll('.pos-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('pos-'+pos).classList.add('active');
+  btn.classList.add('active');
+}
+
+function val(id){const el=document.getElementById(id);return el?el.value.trim():'';}
+function showError(msg){const e=document.getElementById('error-bar');e.textContent=msg;e.classList.add('show');e.scrollIntoView({behavior:'smooth',block:'center'});}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+async function ensureSchool(){
+  const name=val('school_name');
+  const div=val('division');
+  if(!name||!div){showError('Please enter school name and division first.');return null;}
+  if(schoolId)return schoolId;
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/schools`,{
+      method:'POST',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+      body:JSON.stringify({school_name:name,division:div,state:val('state').toUpperCase(),coach_name:val('coach_name'),coach_email:val('coach_email')})
+    });
+    if(!res.ok)throw new Error('Failed');
+    const data=await res.json();
+    schoolId=data[0].id;
+    return schoolId;
+  }catch(e){showError('Could not save school. Please try again.');return null;}
+}
+
+async function savePosition(posName,prefix){
+  const id=await ensureSchool();
+  if(!id)return;
+  const btn=document.querySelector(`#pos-${posName} .save-position-btn`);
+  btn.disabled=true;btn.textContent='Saving...';
+
+  const posMap={catcher:'Catcher',infield:'Infield',outfield:'Outfield',rhp:'Right Handed Pitcher',lhp:'Left Handed Pitcher'};
+
+  const metrics={
+    school_id:String(id),
+    school_name:val('school_name'),
+    position:posMap[posName],
+    height_min:val(`${prefix}-height_min`),
+    weight_min:val(`${prefix}-weight_min`)||'0',
+    sixty_max:val(`${prefix}-sixty_max`)||'0',
+    exit_velo_min:val(`${prefix}-exit_velo_min`)||'0',
+    fb_velo_min:val(`${prefix}-fb_velo_min`)||'0',
+    arm_velo_min:val(`${prefix}-arm_velo_min`)||'0',
+    hard_contact_min:val(`${prefix}-hard_contact_min`)||'0',
+    pop_time_max:val(`${prefix}-pop_time_max`)||'0',
+    strike_pct_min:val(`${prefix}-strike_pct_min`)||'0',
+    fb_bb_diff_min:val(`${prefix}-fb_bb_diff_min`)||'0',
+    fb_ch_diff_min:val(`${prefix}-fb_ch_diff_min`)||'0',
+    height_weight:val(`${prefix}-height_weight`)||'5',
+    sixty_weight:val(`${prefix}-sixty_weight`)||'5',
+    exit_velo_weight:val(`${prefix}-exit_velo_weight`)||'5',
+    fb_velo_weight:val(`${prefix}-fb_velo_weight`)||'5',
+    arm_velo_weight:val(`${prefix}-arm_velo_weight`)||'5',
+    hard_contact_weight:val(`${prefix}-hard_contact_weight`)||'5',
+    pop_time_weight:val(`${prefix}-pop_time_weight`)||'5',
+    strike_pct_weight:val(`${prefix}-strike_pct_weight`)||'5',
+    fb_bb_diff_weight:val(`${prefix}-fb_bb_diff_weight`)||'5',
+    fb_ch_diff_weight:val(`${prefix}-fb_ch_diff_weight`)||'5',
+  };
+
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/school_metrics`,{
+      method:'POST',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+      body:JSON.stringify(metrics)
+    });
+    if(!res.ok)throw new Error('Failed');
+    savedPositions[posName]=true;
+    document.getElementById(`badge-${posName}`).classList.add('show');
+    showToast(`${posMap[posName]} requirements saved!`);
+  }catch(e){
+    showError('Could not save position requirements. Please try again.');
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML=`Save ${posMap[posName]} Requirements <span class="saved-badge${savedPositions[posName]?' show':''}" id="badge-${posName}">✓ Saved</span>`;
+  }
+}
+
+async function submitSchool(){
+  const name=val('school_name');
+  const div=val('division');
+  if(!name){showError('Please enter the school name.');return;}
+  if(!div){showError('Please select a division.');return;}
+  if(!schoolId){
+    const id=await ensureSchool();
+    if(!id)return;
+  }
+  document.getElementById('form-content').style.display='none';
+  document.getElementById('success-screen').classList.add('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function resetForm(){
+  schoolId=null;savedPositions={};
+  document.getElementById('form-content').style.display='block';
+  document.getElementById('success-screen').classList.remove('show');
+  document.getElementById('error-bar').classList.remove('show');
+  ['school_name','state','coach_name','coach_email'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('division').selectedIndex=0;
+  document.querySelectorAll('.saved-badge').forEach(b=>b.classList.remove('show'));
+  document.querySelectorAll('.metric-input').forEach(i=>i.value='');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
