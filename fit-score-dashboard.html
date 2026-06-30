@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fit Score Dashboard — Recruiting HQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0C2340;--navy-mid:#0f2d55;
+  --orange:#E87722;--orange-light:#f08c3a;
+  --chalk:#f8f6f2;--chalk-mid:#ede9e0;--white:#ffffff;
+  --text-dark:#0C2340;--text-mid:#3a4a5c;--text-light:#6a7a8c;
+  --green:#1a7a3c;--green-bg:#EAF3DE;--green-text:#27500A;
+  --amber-bg:#FCF3DA;--amber-text:#7A5B06;
+  --red-bg:#FCEBEB;--red-text:#791F1F;
+  --radius:8px;--radius-lg:12px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--chalk);color:var(--text-dark);-webkit-font-smoothing:antialiased;min-height:100vh}
+.header{background:var(--navy);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--orange);position:sticky;top:0;z-index:50}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;letter-spacing:1px}
+.logo span{color:var(--orange)}
+.header-right{font-size:12px;color:rgba(255,255,255,0.5)}
+.hero{background:var(--navy);padding:32px 24px 40px;text-align:center}
+.hero-eyebrow{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--orange);margin-bottom:10px}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,6vw,56px);color:#fff;line-height:1;margin-bottom:8px}
+.hero p{font-size:13px;color:rgba(255,255,255,0.6);max-width:520px;margin:0 auto}
+
+.filters-bar{background:var(--white);border-bottom:0.5px solid var(--chalk-mid);padding:16px 24px;position:sticky;top:57px;z-index:40}
+.filters-inner{max-width:1200px;margin:0 auto;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.filter-group{display:flex;flex-direction:column;gap:4px;min-width:160px;flex:1}
+.filter-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-light)}
+.filter-select,.filter-input{padding:8px 10px;border:0.5px solid var(--chalk-mid);border-radius:var(--radius);font-size:13px;background:var(--chalk);color:var(--text-dark);font-family:'Inter',sans-serif;width:100%}
+.filter-select:focus,.filter-input:focus{outline:none;border-color:var(--orange)}
+.filter-search{flex:1.5;min-width:180px}
+.clear-btn{background:transparent;border:0.5px solid var(--chalk-mid);border-radius:var(--radius);padding:8px 14px;font-size:12px;color:var(--text-light);cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap}
+.clear-btn:hover{background:var(--chalk-mid);color:var(--text-dark)}
+.refresh-btn{background:var(--navy);color:#fff;border:none;border-radius:var(--radius);padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap}
+.refresh-btn:hover{background:var(--navy-mid)}
+
+.main{max-width:1200px;margin:0 auto;padding:20px 16px 48px}
+.results-bar{font-size:12px;color:var(--text-light);margin-bottom:12px}
+.results-bar strong{color:var(--text-dark)}
+
+.table-wrap{background:var(--white);border:0.5px solid var(--chalk-mid);border-radius:var(--radius-lg);overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:var(--navy);color:#fff;padding:10px 14px;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;cursor:pointer;white-space:nowrap;user-select:none}
+thead th:hover{background:var(--navy-mid)}
+thead th .sort-arrow{font-size:9px;opacity:0.5;margin-left:4px}
+tbody td{padding:10px 14px;border-bottom:0.5px solid var(--chalk-mid);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--chalk)}
+.player-name{font-weight:600;color:var(--text-dark)}
+.player-sub{font-size:11px;color:var(--text-light)}
+.school-name{font-weight:500;color:var(--text-dark)}
+.badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:0.3px;display:inline-block}
+.badge-d1{background:#E6F0FB;color:#0C447C}.badge-d2{background:#EAF3DE;color:#27500A}
+.badge-d3{background:#EDE9FE;color:#3C3489}.badge-juco{background:#FAEEDA;color:#633806}
+.badge-naia{background:#FCE7F3;color:#831843}
+.score-pill{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:13px;padding:4px 10px;border-radius:20px}
+.score-great{background:var(--green-bg);color:var(--green-text)}
+.score-good{background:var(--amber-bg);color:var(--amber-text)}
+.score-low{background:var(--red-bg);color:var(--red-text)}
+.score-bar-wrap{width:60px;height:5px;background:var(--chalk-mid);border-radius:10px;overflow:hidden;margin-top:4px}
+.score-bar-fill{height:100%;border-radius:10px}
+.metrics-used{font-size:11px;color:var(--text-light)}
+.expand-btn{background:transparent;border:0.5px solid var(--chalk-mid);border-radius:var(--radius);padding:5px 10px;font-size:11px;cursor:pointer;color:var(--text-mid);font-family:'Inter',sans-serif}
+.expand-btn:hover{background:var(--chalk-mid)}
+.detail-row{display:none;background:var(--chalk)}
+.detail-row.open{display:table-row}
+.detail-row td{padding:14px 18px}
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}
+.detail-metric{background:var(--white);border:0.5px solid var(--chalk-mid);border-radius:var(--radius);padding:8px 10px}
+.detail-metric-name{font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text-light);margin-bottom:3px}
+.detail-metric-val{font-size:13px;color:var(--text-dark)}
+.detail-metric-val .raw{color:var(--text-light);font-size:11px}
+
+.empty{text-align:center;padding:4rem 1rem;color:var(--text-light)}
+.empty-icon{font-size:48px;display:block;margin-bottom:12px}
+.empty h3{font-size:18px;color:var(--text-dark);margin-bottom:8px}
+.loading{text-align:center;padding:4rem;color:var(--text-light);font-size:14px}
+.error-bar{background:#FCEBEB;color:#791F1F;padding:10px 24px;text-align:center;font-size:13px;display:none}
+.error-bar.show{display:block}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--text-light);margin-top:10px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+@media(max-width:700px){
+  .filters-inner{flex-direction:column;align-items:stretch}
+  table{font-size:12px}
+  thead th,tbody td{padding:8px}
+  .detail-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="error-bar" id="error-bar"></div>
+
+<header class="header">
+  <div class="logo">Recruiting<span>HQ</span></div>
+  <div class="header-right">Fit Score Dashboard</div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow">Player × School Matching</div>
+  <h1>Fit Scores</h1>
+  <p>Every player scored against every school's position requirements. Sort or filter to find the best matches.</p>
+</section>
+
+<div class="filters-bar">
+  <div class="filters-inner">
+    <div class="filter-group filter-search">
+      <div class="filter-label">Search</div>
+      <input class="filter-input" id="f-search" placeholder="Player or school name..." oninput="render()"/>
+    </div>
+    <div class="filter-group">
+      <div class="filter-label">Player</div>
+      <select class="filter-select" id="f-player" onchange="render()"><option value="">All players</option></select>
+    </div>
+    <div class="filter-group">
+      <div class="filter-label">School</div>
+      <select class="filter-select" id="f-school" onchange="render()"><option value="">All schools</option></select>
+    </div>
+    <div class="filter-group">
+      <div class="filter-label">Division</div>
+      <select class="filter-select" id="f-div" onchange="render()">
+        <option value="">All divisions</option>
+        <option>D1</option><option>D2</option><option>D3</option><option>JUCO</option><option>NAIA</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <div class="filter-label">Min Fit Score</div>
+      <select class="filter-select" id="f-minscore" onchange="render()">
+        <option value="0">Any score</option>
+        <option value="0.9">90%+</option>
+        <option value="0.75">75%+</option>
+        <option value="0.6">60%+</option>
+        <option value="0.5">50%+</option>
+      </select>
+    </div>
+    <button class="clear-btn" onclick="clearFilters()">Clear filters</button>
+    <button class="refresh-btn" onclick="loadAll()">↻ Refresh Data</button>
+  </div>
+</div>
+
+<main class="main">
+  <div class="results-bar" id="results-bar"></div>
+  <div class="table-wrap">
+    <table id="results-table" style="display:none">
+      <thead>
+        <tr>
+          <th onclick="setSort('player_name')">Player <span class="sort-arrow" id="arrow-player_name"></span></th>
+          <th onclick="setSort('grad_year')">Grad <span class="sort-arrow" id="arrow-grad_year"></span></th>
+          <th onclick="setSort('player_position')">Pos <span class="sort-arrow" id="arrow-player_position"></span></th>
+          <th onclick="setSort('school_name')">School <span class="sort-arrow" id="arrow-school_name"></span></th>
+          <th onclick="setSort('division')">Div <span class="sort-arrow" id="arrow-division"></span></th>
+          <th onclick="setSort('req_position')">Requirement <span class="sort-arrow" id="arrow-req_position"></span></th>
+          <th onclick="setSort('fit_score')">Fit Score <span class="sort-arrow" id="arrow-fit_score"></span></th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody id="results-tbody"></tbody>
+    </table>
+    <div class="loading" id="loading">Loading players, schools, and metrics...</div>
+    <div class="empty" id="empty-state" style="display:none">
+      <span class="empty-icon">🎯</span>
+      <h3>No results match your filters</h3>
+      <p>Try adjusting your search or clearing filters.</p>
+    </div>
+  </div>
+  <div class="legend">
+    <span><i style="background:var(--green-bg);border:1px solid var(--green-text)"></i> 80%+ Strong fit</span>
+    <span><i style="background:var(--amber-bg);border:1px solid var(--amber-text)"></i> 60–80% Moderate fit</span>
+    <span><i style="background:var(--red-bg);border:1px solid var(--red-text)"></i> Below 60% Weak fit</span>
+  </div>
+</main>
+
+<script>
+const SUPABASE_URL='https://tthkymotrfxjkylxgclf.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0aGt5bW90cmZ4amt5bHhnY2xmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzNDU0NTMsImV4cCI6MjA5NzkyMTQ1M30.HmDXmImmPQVHvOa5_aKPPyYxI440QMIsoFkB9ZUlWfA';
+const DIV_COLORS={D1:'badge-d1',D2:'badge-d2',D3:'badge-d3',JUCO:'badge-juco',NAIA:'badge-naia'};
+
+// Maps a school_metrics field pair (min/max key, weight key) to the matching player field.
+// "dir" tells us whether higher-is-better or lower-is-better.
+const METRIC_DEFS=[
+  {label:'Height',        reqKey:'height_min',      weightKey:'height_weight',      playerKey:'height',       dir:'higher'},
+  {label:'Weight',        reqKey:'weight_min',      weightKey:'weight_weight',      playerKey:'weight',       dir:'higher'},
+  {label:'60 Time',       reqKey:'sixty_max',       weightKey:'sixty_weight',       playerKey:'sixty_time',   dir:'lower'},
+  {label:'Exit Velocity', reqKey:'exit_velo_min',   weightKey:'exit_velo_weight',   playerKey:'exit_velo',    dir:'higher'},
+  {label:'FB Velocity',   reqKey:'fb_velo_min',     weightKey:'fb_velo_weight',     playerKey:'fb_velo',      dir:'higher'},
+  {label:'Arm Velocity',  reqKey:'arm_velo_min',    weightKey:'arm_velo_weight',    playerKey:'arm_velo',     dir:'higher'},
+  {label:'Hard Contact %',reqKey:'hard_contact_min',weightKey:'hard_contact_weight',playerKey:'hard_contact', dir:'higher'},
+  {label:'Pop Time 2B',   reqKey:'pop_time_max',    weightKey:'pop_time_weight',    playerKey:'pop_time',     dir:'lower'},
+  {label:'Strike %',      reqKey:'strike_pct_min',  weightKey:'strike_pct_weight',  playerKey:'strike_pct',   dir:'higher'},
+  {label:'FB-BB Diff',    reqKey:'fb_bb_diff_min',  weightKey:'fb_bb_diff_weight',  playerKey:'fb_bb_diff',   dir:'higher'},
+  {label:'FB-CH Diff',    reqKey:'fb_ch_diff_min',  weightKey:'fb_ch_diff_weight',  playerKey:'fb_ch_diff',   dir:'higher'},
+];
+
+const CAP=1.3, FLOOR=0.3;
+
+let players=[],schools=[],schoolMetrics=[],results=[];
+let sortKey='fit_score',sortDir='desc';
+let openDetailKeys=new Set();
+
+function num(v){const n=parseFloat(v);return isNaN(n)?0:n;}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function showError(msg){const e=document.getElementById('error-bar');e.textContent=msg;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),6000);}
+
+async function fetchTable(name){
+  const res=await fetch(`${SUPABASE_URL}/rest/v1/${name}?select=*`,{headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
+  if(!res.ok)throw new Error(`Failed to load ${name}`);
+  return await res.json();
+}
+
+async function loadAll(){
+  document.getElementById('loading').style.display='block';
+  document.getElementById('loading').textContent='Loading players, schools, and metrics...';
+  document.getElementById('results-table').style.display='none';
+  document.getElementById('empty-state').style.display='none';
+  try{
+    [players,schools,schoolMetrics]=await Promise.all([fetchTable('players'),fetchTable('schools'),fetchTable('school_metrics')]);
+    computeAllScores();
+    populateFilterDropdowns();
+    render();
+  }catch(e){
+    showError('Could not load data from Supabase. Please refresh.');
+    document.getElementById('loading').textContent='Could not load data. Please refresh.';
+  }
+}
+
+// Core scoring function for one metric.
+function scoreMetric(reqVal,weightVal,playerVal,dir){
+  const req=num(reqVal),weight=num(weightVal),pv=num(playerVal);
+  // Treat 0/blank requirement OR 0/blank weight as "not set by coach" -> excluded
+  if(!req||!weight)return null;
+  // Treat 0/blank player value as "not submitted by player" -> excluded
+  if(!pv)return null;
+  let raw;
+  if(dir==='higher')raw=pv/req;
+  else raw=req/pv; // lower is better
+  raw=Math.min(CAP,Math.max(FLOOR,raw));
+  return {raw,weight};
+}
+
+function computeAllScores(){
+  results=[];
+  for(const player of players){
+    for(const sm of schoolMetrics){
+      const school=schools.find(s=>String(s.id)===String(sm.school_id));
+      if(!school)continue;
+      let weightedSum=0,weightSum=0;
+      const breakdown=[];
+      for(const def of METRIC_DEFS){
+        const r=scoreMetric(sm[def.reqKey],sm[def.weightKey],player[def.playerKey],def.dir);
+        if(r){
+          weightedSum+=r.raw*r.weight;
+          weightSum+=r.weight;
+          breakdown.push({label:def.label,raw:r.raw,weight:r.weight,reqVal:sm[def.reqKey],playerVal:player[def.playerKey],dir:def.dir});
+        }
+      }
+      if(weightSum===0)continue; // no overlapping metrics at all, skip this pairing
+      const fitScore=weightedSum/weightSum;
+      results.push({
+        player_name:player.player_name,
+        grad_year:player.grad_year,
+        player_position:player.position,
+        school_name:school.school_name,
+        division:school.division,
+        req_position:sm.position,
+        fit_score:fitScore,
+        metrics_used:breakdown.length,
+        breakdown,
+        key:`${player.player_name}__${school.school_name}__${sm.position}`
+      });
+    }
+  }
+}
+
+function populateFilterDropdowns(){
+  const playerSel=document.getElementById('f-player');
+  const schoolSel=document.getElementById('f-school');
+  const playerNames=[...new Set(players.map(p=>p.player_name))].sort();
+  const schoolNames=[...new Set(schools.map(s=>s.school_name))].sort();
+  playerSel.innerHTML='<option value="">All players</option>'+playerNames.map(n=>`<option>${esc(n)}</option>`).join('');
+  schoolSel.innerHTML='<option value="">All schools</option>'+schoolNames.map(n=>`<option>${esc(n)}</option>`).join('');
+}
+
+function setSort(key){
+  if(sortKey===key)sortDir=sortDir==='asc'?'desc':'asc';
+  else{sortKey=key;sortDir=key==='fit_score'?'desc':'asc';}
+  render();
+}
+
+function clearFilters(){
+  document.getElementById('f-search').value='';
+  document.getElementById('f-player').value='';
+  document.getElementById('f-school').value='';
+  document.getElementById('f-div').value='';
+  document.getElementById('f-minscore').value='0';
+  render();
+}
+
+function scoreClass(score){
+  if(score>=0.8)return'score-great';
+  if(score>=0.6)return'score-good';
+  return'score-low';
+}
+function scoreBarColor(score){
+  if(score>=0.8)return'var(--green-text)';
+  if(score>=0.6)return'var(--amber-text)';
+  return'var(--red-text)';
+}
+
+function render(){
+  if(!results.length && players.length===0){return;} // still loading
+  document.getElementById('loading').style.display='none';
+
+  const search=document.getElementById('f-search').value.toLowerCase().trim();
+  const playerF=document.getElementById('f-player').value;
+  const schoolF=document.getElementById('f-school').value;
+  const divF=document.getElementById('f-div').value;
+  const minScore=parseFloat(document.getElementById('f-minscore').value);
+
+  let filtered=results.filter(r=>{
+    if(search&&!`${r.player_name} ${r.school_name}`.toLowerCase().includes(search))return false;
+    if(playerF&&r.player_name!==playerF)return false;
+    if(schoolF&&r.school_name!==schoolF)return false;
+    if(divF&&r.division!==divF)return false;
+    if(r.fit_score<minScore)return false;
+    return true;
+  });
+
+  filtered.sort((a,b)=>{
+    let av=a[sortKey],bv=b[sortKey];
+    if(typeof av==='string')av=av.toLowerCase();
+    if(typeof bv==='string')bv=bv.toLowerCase();
+    if(av<bv)return sortDir==='asc'?-1:1;
+    if(av>bv)return sortDir==='asc'?1:-1;
+    return 0;
+  });
+
+  document.querySelectorAll('.sort-arrow').forEach(a=>a.textContent='');
+  const arrowEl=document.getElementById('arrow-'+sortKey);
+  if(arrowEl)arrowEl.textContent=sortDir==='asc'?'▲':'▼';
+
+  document.getElementById('results-bar').innerHTML=`Showing <strong>${filtered.length}</strong> of ${results.length} player–school matchups`;
+
+  const table=document.getElementById('results-table');
+  const emptyState=document.getElementById('empty-state');
+  const tbody=document.getElementById('results-tbody');
+
+  if(!filtered.length){
+    table.style.display='none';
+    emptyState.style.display='block';
+    return;
+  }
+  table.style.display='table';
+  emptyState.style.display='none';
+
+  tbody.innerHTML=filtered.map(r=>{
+    const divClass=DIV_COLORS[r.division]||'badge-d1';
+    const pct=Math.round(r.fit_score*100);
+    const sClass=scoreClass(r.fit_score);
+    const barColor=scoreBarColor(r.fit_score);
+    const barWidth=Math.min(100,Math.round((r.fit_score/CAP)*100));
+    const isOpen=openDetailKeys.has(r.key);
+    const detailHtml=r.breakdown.map(b=>`
+      <div class="detail-metric">
+        <div class="detail-metric-name">${esc(b.label)} (wt ${b.weight})</div>
+        <div class="detail-metric-val">${esc(b.playerVal)} <span class="raw">vs ${b.dir==='lower'?'max':'min'} ${esc(b.reqVal)} → ${Math.round(b.raw*100)}%</span></div>
+      </div>`).join('');
+    return`<tr>
+      <td><div class="player-name">${esc(r.player_name)}</div><div class="player-sub">${esc(r.player_position)}</div></td>
+      <td>${esc(r.grad_year)}</td>
+      <td>${esc(r.player_position)}</td>
+      <td class="school-name">${esc(r.school_name)}</td>
+      <td><span class="badge ${divClass}">${esc(r.division)}</span></td>
+      <td>${esc(r.req_position)}</td>
+      <td>
+        <div class="score-pill ${sClass}">${pct}%</div>
+        <div class="score-bar-wrap"><div class="score-bar-fill" style="width:${barWidth}%;background:${barColor}"></div></div>
+        <div class="metrics-used">${r.metrics_used} metric${r.metrics_used!==1?'s':''} used</div>
+      </td>
+      <td><button class="expand-btn" onclick="toggleDetail('${esc(r.key)}')">${isOpen?'Hide':'View'}</button></td>
+    </tr>
+    <tr class="detail-row ${isOpen?'open':''}" id="detail-${esc(r.key)}">
+      <td colspan="8"><div class="detail-grid">${detailHtml||'<span style="font-size:12px;color:var(--text-light)">No overlapping metrics.</span>'}</div></td>
+    </tr>`;
+  }).join('');
+}
+
+function toggleDetail(key){
+  if(openDetailKeys.has(key))openDetailKeys.delete(key);
+  else openDetailKeys.add(key);
+  render();
+}
+
+loadAll();
+</script>
+</body>
+</html>
