@@ -327,6 +327,7 @@ await updateSchoolStandards();
 const pos=POSITIONS.find(p=>p.slug===slug);
 const btn=document.querySelector(`#pos-${slug} .save-pos-btn`);
 btn.disabled=true;btn.textContent='Saving...';
+  document.getElementById('error-bar').classList.remove('show');
 
 const checkedMetrics=[];
 pos.metrics.forEach(key=>{
